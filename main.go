@@ -33,4 +33,8 @@ func main() {
 	if err != nil {
 		fmt.Println("Error:", err)
 	}
+	if !authResp.IsSuccessful() || err != nil {
+		// Add a pause.
+		fmt.Scanln()
+	}
 }
