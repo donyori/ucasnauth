@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 )
 
 func main() {
@@ -35,6 +36,17 @@ func main() {
 	}
 	if !authResp.IsSuccessful() || err != nil {
 		// Add a pause.
-		fmt.Scanln()
+		fmt.Print("Press 'Enter' to exit...")
+		// Pause at least one second.
+		c := time.After(time.Second)
+		doesContinue := true
+		for doesContinue {
+			fmt.Scanln()
+			select {
+			case <-c:
+				doesContinue = false
+			default:
+			}
+		}
 	}
 }
