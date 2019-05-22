@@ -15,22 +15,7 @@ func AuthWithGivenInfo(username, password string) (*AuthResp, error) {
 	username = strings.TrimSpace(username)
 	pubKey := NewRsaPublicKey(RsaPubKeyExp, RsaPubKeyModHex, 0)
 	encrypted := RsaEncrypt(pubKey, EncodeUriComponentTwice(password), 16)
-	authResp, err := Authenticate(username, encrypted, time.Second*15)
-	if err != nil {
-		return nil, err
-	}
-	if authResp.IsSuccessful() {
-		d := &usernameAndPassword{
-			Username: username,
-			Password: encrypted,
-		}
-		var data []byte
-		data, err = json.Marshal(d)
-		if err == nil {
-			err = Save(data)
-		}
-	}
-	return authResp, err
+	return authAndUpdateData(username, encrypted)
 }
 
 func AuthWithLastInfo() (*AuthResp, error) {
@@ -43,5 +28,24 @@ func AuthWithLastInfo() (*AuthResp, error) {
 	if err != nil {
 		return nil, err
 	}
-	return Authenticate(d.Username, d.Password, time.Second*15)
+	return authAndUpdateData(d.Username, d.Password)
+}
+
+func authAndUpdateData(username, encryptedPassword string) (*AuthResp, error) {
+	authResp, err := Authenticate(username, encryptedPassword, time.Second*15)
+	if err != nil {
+		return nil, err
+	}
+	if authResp.IsSuccessful() {
+		d := &usernameAndPassword{
+			Username: username,
+			Password: encryptedPassword,
+		}
+		var data []byte
+		data, err = json.Marshal(d)
+		if err == nil {
+			err = Save(data)
+		}
+	}
+	return authResp, err
 }
