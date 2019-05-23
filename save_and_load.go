@@ -8,7 +8,6 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
-	"strings"
 
 	"golang.org/x/crypto/scrypt"
 )
@@ -77,18 +76,10 @@ func generateKey(isForSave bool) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	mId, err := GetProtectedMachineId()
+	seed, err := GetProtectedMachineId()
 	if err != nil {
-		mId = ""
+		return nil, err
 	}
-	macAddrs, err := GetMacAddrs()
-	if err != nil {
-		macAddrs = nil
-	}
-	if mId == "" && macAddrs == nil {
-		return nil, ErrCannotGetMachineInfo
-	}
-	seed := mId + strings.Join(macAddrs, "")
 	var saltFilename string
 	if runtime.GOOS == "windows" {
 		saltFilename = "_" + SaltFilename

@@ -10,7 +10,6 @@ type TraceLoginPageError struct {
 }
 
 var ErrAlreadyLogin error = errors.New("ucasnauth: a user already login")
-var ErrCannotGetMachineInfo error = errors.New("ucasnauth: cannot get machine information")
 
 func NewTraceLoginPageError(msg string) error {
 	msg = strings.TrimSpace(msg)
