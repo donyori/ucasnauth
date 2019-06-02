@@ -49,6 +49,14 @@ Then, if you want to login with previous information, just execute the program w
 ucasnauth
 ```
 
+---
+
+To logout:
+
+```bash
+ucasnauth logout
+```
+
 ## Created Files
 This tool will create some files to save the data, including username, password, and data used for AES encryption.  
 These files are:
