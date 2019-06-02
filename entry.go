@@ -31,6 +31,10 @@ func AuthWithLastInfo() (*AuthResp, error) {
 	return authAndUpdateData(d.Username, d.Password)
 }
 
+func DoLogout() (*LogoutResp, error) {
+	return Logout(time.Second * 15)
+}
+
 func authAndUpdateData(username, encryptedPassword string) (*AuthResp, error) {
 	authResp, err := Authenticate(username, encryptedPassword, time.Second*15)
 	if err != nil {

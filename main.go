@@ -8,33 +8,65 @@ import (
 )
 
 func main() {
-	var authResp *AuthResp
+	var cmdName string
+	var resp Response
 	var err error
-	if len(os.Args) == 1 {
-		authResp, err = AuthWithLastInfo()
-	} else if len(os.Args) == 3 {
-		authResp, err = AuthWithGivenInfo(os.Args[1], os.Args[2])
-		if strings.ContainsRune(os.Args[1], '\\') {
-			fmt.Println(`Error: username cannot contain "\"! ... Just a joke, please ignore this. :)`)
+	switch len(os.Args) {
+	case 1:
+		cmdName = "Authentication"
+		resp, err = AuthWithLastInfo()
+	case 2:
+		cmd := strings.ToLower(os.Args[1])
+		if cmd == "login" {
+			cmdName = "Authentication"
+			resp, err = AuthWithLastInfo()
+		} else if cmd == "logout" {
+			cmdName = "Logout"
+			resp, err = DoLogout()
+		} else {
+			fmt.Println("Invalid arguments:", os.Args[1:])
+			fmt.Println(UsageHint)
+			return
 		}
-	} else {
+	case 3:
+		if strings.ToLower(os.Args[1]) != "logout" {
+			cmdName = "Authentication"
+			resp, err = AuthWithGivenInfo(os.Args[1], os.Args[2])
+		} else {
+			cmdName = "Logout"
+			resp, err = DoLogout()
+		}
+	case 4:
+		cmd := strings.ToLower(os.Args[1])
+		if cmd == "login" {
+			cmdName = "Authentication"
+			resp, err = AuthWithGivenInfo(os.Args[2], os.Args[3])
+		} else if cmd == "logout" {
+			cmdName = "Logout"
+			resp, err = DoLogout()
+		} else {
+			fmt.Println("Invalid arguments:", os.Args[1:])
+			fmt.Println(UsageHint)
+			return
+		}
+	default:
 		fmt.Println("Invalid arguments:", os.Args[1:])
 		fmt.Println(UsageHint)
 		return
 	}
-	if authResp.IsSuccessful() {
-		fmt.Println("Authentication succeeded.")
-	} else if authResp != nil {
-		if authResp.Message != "" {
-			fmt.Println("Authentication failed. Message:", authResp.Message)
+	if resp.IsSuccessful() {
+		fmt.Println(cmdName, "succeeded.")
+	} else if resp != nil {
+		if msg := resp.GetMessage(); msg != "" {
+			fmt.Println(cmdName, "failed. Message:", msg)
 		} else {
-			fmt.Println("Authentication failed.")
+			fmt.Println(cmdName, "failed.")
 		}
 	}
 	if err != nil {
 		fmt.Println("Error:", err)
 	}
-	if !authResp.IsSuccessful() || err != nil {
+	if !resp.IsSuccessful() || err != nil {
 		// Add a pause.
 		fmt.Print("Press 'Enter' to exit...")
 		// Pause at least one second.

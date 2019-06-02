@@ -8,7 +8,8 @@ const IndexPageBasename string = "index.jsp"
 const SuccessPageBasename string = "success.jsp"
 const InterFaceName string = "InterFace.do"
 
-const AuthContentType string = "application/x-www-form-urlencoded;charset=UTF-8"
+const PostContentType string = "application/x-www-form-urlencoded;charset=UTF-8"
+
 const AuthBodyFormat string = "userId=%s&password=%s&service=&queryString=%s" +
 	"&operatorPwd=&operatorUserId=&validcode=&passwordEncrypt=true"
 
@@ -27,7 +28,9 @@ const NonceFilename string = "nonce.dat"
 const SaltFilename string = "ucasnauthsalt.dat"
 
 const UsageHint string = `Usage:
-  UCASNAUTH [username password]
+  UCASNAUTH [login/logout] [username password]
+  If the command "login" or "logout" is not given, login will be executed.
+  username and password are only valid for login.
   If username and password are not given, the value in last successfully
 authentication will be used.
   You must specify username and password when you use it for the first time,

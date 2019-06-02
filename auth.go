@@ -57,15 +57,15 @@ func authenticate(username, encryptedPassword string, timeout time.Duration) (
 	}
 	defer traceResp.Body.Close()
 	if traceResp.StatusCode != http.StatusOK {
-		return nil, NewTraceLoginPageError("got " + traceResp.Status)
+		return nil, NewTracePageError("login", "got "+traceResp.Status)
 	}
 	traceReqUrl := traceResp.Request.URL
 	dir, file := path.Split(traceReqUrl.Path)
 	if file == SuccessPageBasename {
 		return nil, ErrAlreadyLogin
 	} else if file != IndexPageBasename {
-		return nil, NewTraceLoginPageError("found " + file +
-			" instead of " + IndexPageBasename)
+		return nil, NewTracePageError("login", "found "+file+
+			" instead of "+IndexPageBasename)
 	}
 	authUrl := &url.URL{
 		Scheme:   traceReqUrl.Scheme,
@@ -75,10 +75,17 @@ func authenticate(username, encryptedPassword string, timeout time.Duration) (
 	}
 	authBody := fmt.Sprintf(AuthBodyFormat, EncodeUriComponentTwice(username),
 		encryptedPassword, EncodeUriComponentTwice(traceReqUrl.RawQuery))
-	return client.Post(authUrl.String(), AuthContentType,
+	return client.Post(authUrl.String(), PostContentType,
 		strings.NewReader(authBody))
 }
 
 func (ar *AuthResp) IsSuccessful() bool {
 	return ar != nil && strings.ToLower(ar.Result) == "success"
+}
+
+func (ar *AuthResp) GetMessage() string {
+	if ar == nil {
+		return ""
+	}
+	return ar.Message
 }
