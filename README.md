@@ -57,15 +57,21 @@ To logout:
 ucasnauth logout
 ```
 
+---
+
+To delete saved account information:
+
+```bash
+ucasnauth delete
+```
+
 ## Created Files
 This tool will create some files to save the data, including username, password, and data used for AES encryption.  
-These files are:
-* `$HOME/.ucasnauthsalt.dat` (`%USERPROFILE%\_ucasnauthsalt.dat` for Windows)
-* `executable_file_directory/data.dat`
-* `executable_file_directory/nonce.dat`
+These files are under the directory:
+`$HOME/.ucasnauth` (`%USERPROFILE%\.ucasnauth` for Windows)
 
 ## Uninstallation
-To uninstall this tool, remove the executable file and its data files as listed in [Created Files](#created-files).
+To uninstall this tool, remove the executable file and its data files as shown in [Created Files](#created-files).
 If you want to remove the source codes as well, remove `$GOPATH/src/github.com/donyori/ucasnauth` and all its contents.
 
 ## License
