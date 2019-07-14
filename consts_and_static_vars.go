@@ -1,5 +1,10 @@
 package main
 
+import (
+	"os"
+	"path/filepath"
+)
+
 const AppId string = "ucasnauth"
 
 const HostUrl string = "http://210.77.16.21/"
@@ -28,10 +33,20 @@ const NonceFilename string = "nonce.dat"
 const SaltFilename string = "ucasnauthsalt.dat"
 
 const UsageHint string = `Usage:
-  UCASNAUTH [login/logout] [username password]
-  If the command "login" or "logout" is not given, login will be executed.
+  UCASNAUTH [login/logout/delete] [username password]
+  If the command "login", "logout" or "delete" is not given, login will be executed.
   username and password are only valid for login.
   If username and password are not given, the value in last successfully
 authentication will be used.
   You must specify username and password when you use it for the first time,
 or when the saved data is corrupt or expired.`
+
+var DataDir string
+
+func init() {
+	userHome, err := os.UserHomeDir()
+	if err != nil {
+		panic(err)
+	}
+	DataDir = filepath.Join(userHome, ".ucasnauth")
+}

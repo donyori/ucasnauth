@@ -6,6 +6,11 @@ import (
 	"time"
 )
 
+type DeleteResp struct {
+	isSuccessful bool
+	msg          string
+}
+
 type usernameAndPassword struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
@@ -35,6 +40,17 @@ func DoLogout() (*LogoutResp, error) {
 	return Logout(time.Second * 15)
 }
 
+func DoDelete() (*DeleteResp, error) {
+	err := Delete()
+	resp := new(DeleteResp)
+	if err == nil {
+		resp.isSuccessful = true
+	} else {
+		resp.msg = err.Error()
+	}
+	return resp, nil
+}
+
 func authAndUpdateData(username, encryptedPassword string) (*AuthResp, error) {
 	authResp, err := Authenticate(username, encryptedPassword, time.Second*15)
 	if err != nil {
@@ -52,4 +68,15 @@ func authAndUpdateData(username, encryptedPassword string) (*AuthResp, error) {
 		}
 	}
 	return authResp, err
+}
+
+func (dr *DeleteResp) IsSuccessful() bool {
+	return dr != nil && dr.isSuccessful
+}
+
+func (dr *DeleteResp) GetMessage() string {
+	if dr == nil {
+		return ""
+	}
+	return dr.msg
 }

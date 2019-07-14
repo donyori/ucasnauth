@@ -17,34 +17,46 @@ func main() {
 		resp, err = AuthWithLastInfo()
 	case 2:
 		cmd := strings.ToLower(os.Args[1])
-		if cmd == "login" {
+		switch cmd {
+		case "login":
 			cmdName = "Authentication"
 			resp, err = AuthWithLastInfo()
-		} else if cmd == "logout" {
+		case "logout":
 			cmdName = "Logout"
 			resp, err = DoLogout()
-		} else {
+		case "delete":
+			cmdName = "Delete"
+			resp, err = DoDelete()
+		default:
 			fmt.Println("Invalid arguments:", os.Args[1:])
 			fmt.Println(UsageHint)
 			return
 		}
 	case 3:
-		if strings.ToLower(os.Args[1]) != "logout" {
+		arg1 := strings.ToLower(os.Args[1])
+		if arg1 != "logout" && arg1 != "delete" {
 			cmdName = "Authentication"
 			resp, err = AuthWithGivenInfo(os.Args[1], os.Args[2])
-		} else {
+		} else if arg1 == "logout" {
 			cmdName = "Logout"
 			resp, err = DoLogout()
+		} else {
+			cmdName = "Delete"
+			resp, err = DoDelete()
 		}
 	case 4:
 		cmd := strings.ToLower(os.Args[1])
-		if cmd == "login" {
+		switch cmd {
+		case "login":
 			cmdName = "Authentication"
 			resp, err = AuthWithGivenInfo(os.Args[2], os.Args[3])
-		} else if cmd == "logout" {
+		case "logout":
 			cmdName = "Logout"
 			resp, err = DoLogout()
-		} else {
+		case "delete":
+			cmdName = "Delete"
+			resp, err = DoDelete()
+		default:
 			fmt.Println("Invalid arguments:", os.Args[1:])
 			fmt.Println(UsageHint)
 			return
