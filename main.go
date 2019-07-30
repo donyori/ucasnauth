@@ -78,11 +78,15 @@ func main() {
 	if err != nil {
 		fmt.Println("Error:", err)
 	}
-	if !resp.IsSuccessful() || err != nil {
+	if resp.IsSuccessful() && err == nil {
+		fmt.Println(cmdName, "succeeded.")
+		// Sleep one second.
+		time.Sleep(time.Second)
+	} else {
 		// Add a pause.
 		fmt.Print("Press 'Enter' to exit...")
-		// Pause at least one second.
-		c := time.After(time.Second)
+		// Pause at least one millisecond.
+		c := time.After(time.Millisecond)
 		doesContinue := true
 		for doesContinue {
 			fmt.Scanln()
