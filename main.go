@@ -79,7 +79,6 @@ func main() {
 		fmt.Println("Error:", err)
 	}
 	if resp.IsSuccessful() && err == nil {
-		fmt.Println(cmdName, "succeeded.")
 		// Sleep one second.
 		time.Sleep(time.Second)
 	} else {
