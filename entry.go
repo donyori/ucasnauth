@@ -16,11 +16,28 @@ type usernameAndPassword struct {
 	Password string `json:"password"`
 }
 
+const defaultTimeout time.Duration = time.Second * 10
+
 func AuthWithGivenInfo(username, password string) (*AuthResp, error) {
 	username = strings.TrimSpace(username)
 	pubKey := NewRsaPublicKey(RsaPubKeyExp, RsaPubKeyModHex, 0)
 	encrypted := RsaEncrypt(pubKey, EncodeUriComponentTwice(password), 16)
-	return authAndUpdateData(username, encrypted)
+	authResp, err := Authenticate(username, encrypted, defaultTimeout)
+	if err != nil {
+		return nil, err
+	}
+	if authResp.IsSuccessful() {
+		d := &usernameAndPassword{
+			Username: username,
+			Password: encrypted,
+		}
+		var data []byte
+		data, err = json.Marshal(d)
+		if err == nil {
+			err = Save(data)
+		}
+	}
+	return authResp, err
 }
 
 func AuthWithLastInfo() (*AuthResp, error) {
@@ -33,11 +50,11 @@ func AuthWithLastInfo() (*AuthResp, error) {
 	if err != nil {
 		return nil, err
 	}
-	return authAndUpdateData(d.Username, d.Password)
+	return Authenticate(d.Username, d.Password, defaultTimeout)
 }
 
 func DoLogout() (*LogoutResp, error) {
-	return Logout(time.Second * 15)
+	return Logout(defaultTimeout)
 }
 
 func DoDelete() (*DeleteResp, error) {
@@ -49,25 +66,6 @@ func DoDelete() (*DeleteResp, error) {
 		resp.msg = err.Error()
 	}
 	return resp, nil
-}
-
-func authAndUpdateData(username, encryptedPassword string) (*AuthResp, error) {
-	authResp, err := Authenticate(username, encryptedPassword, time.Second*15)
-	if err != nil {
-		return nil, err
-	}
-	if authResp.IsSuccessful() {
-		d := &usernameAndPassword{
-			Username: username,
-			Password: encryptedPassword,
-		}
-		var data []byte
-		data, err = json.Marshal(d)
-		if err == nil {
-			err = Save(data)
-		}
-	}
-	return authResp, err
 }
 
 func (dr *DeleteResp) IsSuccessful() bool {
