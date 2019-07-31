@@ -30,7 +30,7 @@ const RsaPubKeyExp int = 0x10001
 
 const DataFilename string = "data.dat"
 const NonceFilename string = "nonce.dat"
-const SaltFilename string = "ucasnauthsalt.dat"
+const SaltFilename string = "salt.dat"
 
 const UsageHint string = `Usage:
   UCASNAUTH [login/logout/delete] [username password]
